@@ -10,10 +10,9 @@ if [[ $use_default_password == "s" || $use_default_password == "S" ]]; then
     read -p "Digite a senha padrão: " default_password
 fi
 
+read -p "Deseja usar um nome padrão para todos os usuários? (s/n) " use_default_name
+
 for ((i=1; i<=$num_users; i++)); do
-   
-    read -p "Deseja usar um nome padrão para o usuário $i? (s/n) " use_default_name
-    
     if [[ $use_default_name == "s" || $use_default_name == "S" ]]; then
         username="Usuario$i"
     else
