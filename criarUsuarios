@@ -1,0 +1,35 @@
+#!/bin/bash
+
+echo "Bem-vindo ao script de criação de usuários!"
+
+read -p "Quantos usuários você deseja criar? " num_users
+
+read -p "Deseja usar uma senha padrão para todos os usuários? (s/n) " use_default_password
+
+if [[ $use_default_password == "s" || $use_default_password == "S" ]]; then
+    read -p "Digite a senha padrão: " default_password
+fi
+
+for ((i=1; i<=$num_users; i++)); do
+   
+    read -p "Deseja usar um nome padrão para o usuário $i? (s/n) " use_default_name
+    
+    if [[ $use_default_name == "s" || $use_default_name == "S" ]]; then
+        username="Usuario$i"
+    else
+        read -p "Digite o nome para o usuário $i: " username
+    fi
+    
+    if [[ $use_default_password != "s" && $use_default_password != "S" ]]; then
+        read -p "Digite a senha para o usuário $username: " user_password
+    else
+        user_password=$default_password
+    fi
+
+    sudo useradd -m -s /bin/bash "$username"
+    echo "$username:$user_password" | sudo chpasswd
+
+    echo "Usuário $username criado com sucesso!"
+done
+
+echo "Todos os usuários foram criados."
