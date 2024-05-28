@@ -4,6 +4,9 @@ if [ "$EUID" -ne 0 ]; then
     echo "Este script precisa ser executado como root. Por favor, execute-o usando 'sudo'."
     exit 1
 fi
+echo "Atualizando o sistema e instalando pacotes necessários..."
+apt update
+apt install -y lxc
 
 echo "Bem-vindo ao script de criação de usuários e containers!"
 
