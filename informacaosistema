@@ -17,14 +17,13 @@ echo "Uso de Disco:"
 df -h | grep -E '/dev/sd|/dev/nv'
 echo "Endereço IP: $(hostname -I)"
 echo "Data e Hora Atuais: $(date)"
-echo "Partições de Disco:"
- df -h
 echo "Usuários do Sistema:"
 cut -d ':' -f 1 /etc/passwd
-echo "Pacotes Instalados:" dpkg -l | grep '^ii' | awk '{print $2}'
-echo "Por favor, selecione o sistema que você está usando:"
+echo "======================="
+echo "Por favor, selecione o sistema que você está usando para listar os pacotes:"
 echo "1. Debian/Ubuntu"
 echo "2. Red Hat/CentOS"
+echo "3. Não mostrar pacotes"
 read -p "Digite o número correspondente ao seu sistema: " opcao
 if [ "$opcao" == "1" ]; then
     echo "Pacotes Instalados (Debian/Ubuntu):"
@@ -32,6 +31,8 @@ if [ "$opcao" == "1" ]; then
 elif [ "$opcao" == "2" ]; then
     echo "Pacotes Instalados (Red Hat/CentOS):"
     rpm -qa
+elif [ "$opcao" ==  "3" ]; then
+	echo "Saindo do Script...."
 else
-    echo "Opção inválida. Por favor, selecione 1 ou 2."
+    echo "Opção inválida. Por favor, selecione 1,2 ou 3."
 fi
