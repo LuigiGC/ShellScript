@@ -1,0 +1,48 @@
+#!/bin/bash
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Este script precisa ser executado como root. Por favor, execute-o usando 'sudo'."
+    exit 1
+fi
+
+echo "Bem-vindo ao script de criação de usuários e containers!"
+
+read -p "Quantos usuários você deseja criar? " num_users
+
+read -p "Deseja usar uma senha padrão para todos os usuários? (s/n) " use_default_password
+
+if [[ $use_default_password == "s" || $use_default_password == "S" ]]; then
+    read -p "Digite a senha padrão: " default_password
+fi
+
+read -p "Deseja iniciar os containers após a criação? (s/n) " start_containers
+
+for ((i=1; i<=$num_users; i++)); do
+    read -p "Deseja usar um nome padrão para o usuário $i? (s/n) " use_default_name
+    
+    if [[ $use_default_name == "s" || $use_default_name == "S" ]]; then
+        username="Usuario$i"
+    else
+        read -p "Digite o nome para o usuário $i: " username
+    fi
+    
+    if [[ $use_default_password != "s" && $use_default_password != "S" ]]; then
+        read -p "Digite a senha para o usuário $username: " user_password
+    else
+        user_password=$default_password
+    fi
+
+    useradd -m -s /bin/bash "$username"
+    echo "$username:$user_password" | chpasswd
+
+    echo "Usuário $username criado com sucesso!"
+
+    lxc init ubuntu:20.04 "$username"
+
+    if [[ $start_containers == "s" || $start_containers == "S" ]]; then
+        lxc start "$username"
+        echo "Container $username iniciado."
+    fi
+done
+
+echo "Todos os usuários e containers foram criados."
