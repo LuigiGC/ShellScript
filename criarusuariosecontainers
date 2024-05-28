@@ -8,6 +8,10 @@ echo "Atualizando o sistema e instalando pacotes necessários..."
 apt update
 apt install -y lxc
 
+echo "Inicializando o LXD..."
+lxd init --auto
+
+
 echo "Bem-vindo ao script de criação de usuários e containers!"
 
 read -p "Quantos usuários você deseja criar? " num_users
