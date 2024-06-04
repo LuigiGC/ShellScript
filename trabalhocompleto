@@ -14,7 +14,7 @@ BG_RESET='\033[49m'
 
 # Função para capturar Ctrl+C e impedir a interrupção do script
 trap_ctrlc() {
-    echo -e "\n${RED}Interrupção com Ctrl+C detectada. A unica forma de sair do programa é utilizando a opção 5 no menu de opções!${RESET}"
+    echo -e "\n${RED}Tentativa de utilização do Ctrl+C detectada. A unica forma de sair do programa é utilizando a opção 5 no menu de opções!${RESET}"
 }
 
 # Definir a trap para o sinal SIGINT (Ctrl+C)
