@@ -49,7 +49,6 @@ mostrar_cabecalho() {
     printf "%s\n" "${BG_GREEN}${WHITE}##########################################################${RESET}"
 }
 
-
 # Função para exibir o menu principal
 exibir_menu_principal() {
     echo -e "${CYAN}Menu de Escolhas:${RESET}"
@@ -79,7 +78,14 @@ criar_backup() {
     echo -e "${CYAN}##############################################################${RESET}"
     echo -e "${CYAN}#                      Criar Backup de Arquivos              #${RESET}"         
     echo -e "${CYAN}##############################################################${RESET}"
+
+    echo -e "${YELLOW}Diretórios disponíveis:${RESET}"
+    ls -d */
+    
     read -p "Informe o diretório que deseja fazer backup: " diretorio
+    echo -e "${YELLOW}Arquivos disponíveis no diretório $diretorio:${RESET}"
+    ls "$diretorio"
+    
     read -p "Informe o nome do arquivo de backup (sem extensão): " nome_backup
     tar -czvf "$nome_backup.tar.gz" "$diretorio"
     echo -e "${GREEN}Backup criado com sucesso: $nome_backup.tar.gz${RESET}"
