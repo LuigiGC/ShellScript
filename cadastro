@@ -6,7 +6,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
-    <!--Stylesheet-->
     <style media="screen">
         *,
         *:before,
@@ -151,27 +150,31 @@
         <div class="shape"></div>
     </div>
     <form id="main-form">
-        <h3>CertiBrasil</h3>
+        <h3>Cadastro cliente</h3>
 
-        <label for="nome">Nome</label>
+        <label for="nome">Nome:</label>
         <input type="text" placeholder="Nome" id="nome">
 
-        <label for="email">Email</label>
+        <label for="email">Email:</label>
         <input type="email" placeholder="Email" id="email">
 
-        <label for="telefone">Telefone</label>
+        <label for="telefone">Telefone:</label>
         <input type="tel" placeholder="Telefone" id="telefone">
 
-        <label for="cnpj">CNPJ</label>
+        <label for="cnpj">CNPJ:</label>
         <input type="text" placeholder="CNPJ" id="cnpj">
 
-        <label for="endereco">Cadastrar Novo Endereço</label>
-        <button type="button" onclick="showAddressForm()">Cadastrar Endereço</button>
-        <div id="endereco-list"></div>
+        <label for="endereco">Endereços</label>
+        <div id="endereco-list">
+            <label style="display: none;" id="endereco-label" for="enderecosCadastrados">Endereços cadastrados:</label>
+        </div>
+        <button type="button" onclick="showAddressForm()">Cadastrar novo endereço</button>
 
-        <label for="iso">Certificação</label>
-        <button type="button" onclick="showISOForm()">Cadastrar Certificação</button>
-        <div id="iso-list"></div>
+        <label for="iso">Certificações</label>
+        <div id="iso-list">
+            <label style="display: none;"  id="iso-label" for="certificacoesCadastradas">Certificações Cadastradas:</label>
+        </div>
+        <button type="button" onclick="showISOForm()">Cadastrar nova certificação</button>
 
         <button type="submit">Salvar</button>
     </form>
@@ -183,7 +186,7 @@
         <input type="text" placeholder="CEP" id="cep" onblur="populateAddressFields()">
 
         <label for="logradouro">Logradouro</label>
-        <input type="text" placeholder="Logradouro" id="logradouro" onblur="preciseSearch()">
+        <input type="text" placeholder="Logradouro" id="logradouro" onblur="preciseSearch() ">
 
         <label for="numero">Número</label>
         <input type="text" placeholder="Número" id="numero" onblur="preciseSearch()">
@@ -286,9 +289,26 @@
             const address = `${logradouro}, ${numero}, ${cidade}`;
 
             const addressList = document.getElementById('endereco-list');
+            const enderecoLabel = document.getElementById('endereco-label');
+            if (addressList.children.length > 1) {
+                enderecoLabel.style.display = 'block';
+            }
             const addressItem = document.createElement('div');
+            const addressButton = document.createElement('button');
             addressItem.textContent = address;
+            addressItem.style.backgroundColor = 'rgba(255,255,255,0.07)';
+            addressItem.style.display = 'block';
+            addressItem.style.height = 'auto';
+            addressItem.style.width = '100%';
+            addressItem.style.borderRadius = '3px';
+            addressItem.style.padding = '0 10px';
+            addressItem.style.marginTop = '8px';
+            addressItem.style.fontSize = '14px';
+            addressItem.style.fontWeight = '300';
+
             addressList.appendChild(addressItem);
+
+            addressButton.textContent = "Excluir";
 
             document.getElementById('address-form').reset();
             showMainForm();
@@ -310,8 +330,24 @@
             };
 
             const isoList = document.getElementById('iso-list');
+            const isoLabel = document.getElementById('iso-label');
+            if (isoList.children.length > 1) {
+                isoLabel.style.display = 'block';
+            }
             const isoItem = document.createElement('div');
-            isoItem.innerHTML = `ISO: ${isoType}, Validade: ${formatDateBR(validade)}`;
+            isoItem.innerHTML = `ISO: ${isoType}, ODC: ${odc}, Consultor: ${consultor}, Validade: ${formatDateBR(validade)};`;
+
+            isoItem.style.backgroundColor = 'rgba(255,255,255,0.07)';
+            isoItem.style.display = 'block';
+            isoItem.style.height = 'auto';
+            isoItem.style.width = '100%';
+            isoItem.style.borderRadius = '3px';
+            isoItem.style.padding = '0 10px';
+            isoItem.style.marginTop = '8px';
+            isoItem.style.fontSize = '14px';
+            isoItem.style.fontWeight = '300';
+            
+
             isoList.appendChild(isoItem);
 
             document.getElementById('iso-form').reset();
@@ -333,6 +369,10 @@
         function formatDateBR(dateString) {
             const [year, month, day] = dateString.split('-');
             return `${day}/${month}/${year}`;
+        }
+        function deleteAddress(button) {
+        const enderecoItem = button.parentNode;
+        enderecoItem.remove();
         }
     </script>
 </body>
