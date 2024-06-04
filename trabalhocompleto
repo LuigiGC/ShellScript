@@ -12,6 +12,14 @@ WHITE='\033[0;37m'
 BG_GREEN='\033[42m'
 BG_RESET='\033[49m'
 
+# Função para capturar Ctrl+C e impedir a interrupção do script
+trap_ctrlc() {
+    echo -e "\n${RED}Interrupção com Ctrl+C detectada. A unica forma de sair do programa é utilizando a opção 5 no menu de opções!${RESET}"
+}
+
+# Definir a trap para o sinal SIGINT (Ctrl+C)
+trap trap_ctrlc SIGINT
+
 # Função para exibir o cabeçalho
 mostrar_cabecalho() {
     clear
@@ -102,7 +110,6 @@ exibir_menu_contatos() {
     echo -e "${YELLOW}2) Listar Contatos${RESET}"
     echo -e "${MAGENTA}3) Visualizar Contato por Nome${RESET}"
     echo -e "${RED}4) Remover Contato${RESET}"
-    echo -e "${BLUE}5) Voltar ao Menu Principal${RESET}"
     echo -en "${CYAN}Selecione uma opção: ${RESET}"
 }
 
