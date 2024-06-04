@@ -21,7 +21,7 @@ mostrar_cabecalho() {
     WHITE=$(tput setaf 7)
     GREEN=$(tput setaf 2)
     YELLOW=$(tput setaf 3)
-    CYAN=$(tput setaf 6)
+    BLUE=$(tput setaf 4)
     MAGENTA=$(tput setaf 5)
     RESET=$(tput sgr0)
 
@@ -35,19 +35,20 @@ mostrar_cabecalho() {
     printf "%s\n" "${BG_GREEN}${WHITE}----------------------------------------------------------${RESET}"
 
     printf "${BG_GREEN}${WHITE}# ${WHITE}Equipe Desenvolvedora:"; printf "%*s" $(( largura - 6 - 19 )) ""; printf "${WHITE}#${RESET}\n"
-    printf "${BG_GREEN}${WHITE}# ${CYAN}Aluno: Arthur Camaz"; printf "%*s" $(( largura - 6 - 16 )) ""; printf "${WHITE}#${RESET}\n"
-    printf "${BG_GREEN}${WHITE}# ${CYAN}Aluno: Felipe Tavares"; printf "%*s" $(( largura - 6 - 18 )) ""; printf "${WHITE}#${RESET}\n"
-    printf "${BG_GREEN}${WHITE}# ${CYAN}Aluno: Luigi Cardoso"; printf "%*s" $(( largura - 6 - 17 )) ""; printf "${WHITE}#${RESET}\n"
+    printf "${BG_GREEN}${WHITE}# ${BLUE}Aluno: Arthur Camaz"; printf "%*s" $(( largura - 6 - 16 )) ""; printf "${WHITE}#${RESET}\n"
+    printf "${BG_GREEN}${WHITE}# ${BLUE}Aluno: Felipe Tavares"; printf "%*s" $(( largura - 6 - 18 )) ""; printf "${WHITE}#${RESET}\n"
+    printf "${BG_GREEN}${WHITE}# ${BLUE}Aluno: Luigi Cardoso"; printf "%*s" $(( largura - 6 - 17 )) ""; printf "${WHITE}#${RESET}\n"
 
     printf "%s\n" "${BG_GREEN}${WHITE}----------------------------------------------------------${RESET}"
 
     data=$(date +"%d de %B de %Y")
-    hora=$(date +"${CYAN}%H ${MAGENTA}Hora(s) e ${CYAN}%M ${MAGENTA}Minuto(s)")
+    hora=$(date +"${BLUE}%H ${MAGENTA}Hora(s) e ${BLUE}%M ${MAGENTA}Minuto(s)")
     printf "${BG_GREEN}${WHITE}# ${MAGENTA}Rio de Janeiro, ${data}"; printf "%*s" $(( largura - 6 - 13 - ${#data} )) ""; printf "${WHITE}#${RESET}\n"
     printf "${BG_GREEN}${WHITE}# ${MAGENTA}Hora do Sistema: ${hora}"; printf "%*s" $(( largura - 6 - 20 - ${#hora} )) ""; printf "${WHITE}#${RESET}\n"
 
     printf "%s\n" "${BG_GREEN}${WHITE}##########################################################${RESET}"
 }
+
 
 # Função para exibir o menu principal
 exibir_menu_principal() {
