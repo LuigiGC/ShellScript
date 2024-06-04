@@ -110,6 +110,7 @@ exibir_menu_contatos() {
     echo -e "${YELLOW}2) Listar Contatos${RESET}"
     echo -e "${MAGENTA}3) Visualizar Contato por Nome${RESET}"
     echo -e "${RED}4) Remover Contato${RESET}"
+    echo -e "${BLUE}5) Voltar ao Menu Principal${RESET}"
     echo -en "${CYAN}Selecione uma opção: ${RESET}"
 }
 
