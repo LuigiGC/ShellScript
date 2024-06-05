@@ -315,36 +315,7 @@
         <input type="text" placeholder="Bairro" id="bairro" onblur="preciseSearch()">
 
         <label for="uf-endereco">UF</label>
-        <select id="uf-endereco" style="color: #ffffff;background-color: #000000;" onchange="preciseSearch()">
-            <option value="">Selecione UF</option>
-            <option value="AC">AC</option>
-            <option value="AL">AL</option>
-            <option value="AP">AP</option>
-            <option value="AM">AM</option>
-            <option value="BA">BA</option>
-            <option value="CE">CE</option>
-            <option value="DF">DF</option>
-            <option value="ES">ES</option>
-            <option value="GO">GO</option>
-            <option value="MA">MA</option>
-            <option value="MT">MT</option>
-            <option value="MS">MS</option>
-            <option value="MG">MG</option>
-            <option value="PA">PA</option>
-            <option value="PB">PB</option>
-            <option value="PR">PR</option>
-            <option value="PE">PE</option>
-            <option value="PI">PI</option>
-            <option value="RJ">RJ</option>
-            <option value="RN">RN</option>
-            <option value="RS">RS</option>
-            <option value="RO">RO</option>
-            <option value="RR">RR</option>
-            <option value="SC">SC</option>
-            <option value="SP">SP</option>
-            <option value="SE">SE</option>
-            <option value="TO">TO</option>
-        </select>
+        <input type="text" placeholder="UF" id="uf-endereco" onblur="preciseSearch()">
 
         <label for="cidade-endereco">Cidade</label>
         <input type="text" placeholder="Cidade" id="cidade-endereco" onblur="preciseSearch()">
@@ -384,6 +355,7 @@
     <script>
         function showMainForm() {
             document.getElementById('main-form').style.display = 'block';
+           
             document.getElementById('address-form').style.display = 'none';
             document.getElementById('iso-form').style.display = 'none';
         }
