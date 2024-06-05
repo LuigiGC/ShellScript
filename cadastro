@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <title>CertiBrasil</title>
- 
+
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
@@ -88,17 +88,6 @@
         }
     </style>
     <script>
-        async function fetchCEP(cep) {
-            try {
-                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-                if (!response.ok) throw new Error('CEP não encontrado');
-                return await response.json();
-            } catch (error) {
-                console.error('Erro ao buscar CEP:', error);
-                return null;
-            }
-        }
-
         async function fetchCoordinates(query) {
             try {
                 const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`);
@@ -110,28 +99,20 @@
             }
         }
 
-        async function populateAddressFields() {
-            const cep = document.getElementById('cep').value;
-            if (cep.length === 8) {
-                const addressData = await fetchCEP(cep);
-                if (addressData) {
-                    document.getElementById('logradouro').value = addressData.logradouro || '';
-                    document.getElementById('bairro').value = addressData.bairro || '';
-                    document.getElementById('cidade-endereco').value = addressData.localidade || '';
-                    document.getElementById('uf-endereco').value = addressData.uf || '';
-                    const fullAddress = `${addressData.logradouro}, ${addressData.localidade}, ${addressData.uf}, Brasil`;
-                    const coordinates = await fetchCoordinates(fullAddress);
-                    if (coordinates && coordinates.length > 0) {
-                        document.getElementById('latitude').value = coordinates[0].lat;
-                        document.getElementById('longitude').value = coordinates[0].lon;
-                    }
-                }
+        async function fetchAddressFromCoordinates(lat, lon) {
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                if (!response.ok) throw new Error('Endereço não encontrado');
+                return await response.json();
+            } catch (error) {
+                console.error('Erro ao buscar endereço:', error);
+                return null;
             }
         }
 
         async function preciseSearch() {
             const logradouro = document.getElementById('logradouro').value;
-            const numero = document.getElementById('numero').value;
+            const numero = document.getElementById('numero').value || 's/n';
             const cidade = document.getElementById('cidade-endereco').value;
             const uf = document.getElementById('uf-endereco').value;
             const fullAddress = `${logradouro}, ${numero}, ${cidade}, ${uf}, Brasil`;
@@ -141,6 +122,142 @@
                 document.getElementById('latitude').value = coordinates[0].lat;
                 document.getElementById('longitude').value = coordinates[0].lon;
             }
+        }
+
+        async function populateAddressFieldsFromCoordinates() {
+            const latitude = document.getElementById('latitude').value;
+            const longitude = document.getElementById('longitude').value;
+            if (latitude && longitude) {
+                const addressData = await fetchAddressFromCoordinates(latitude, longitude);
+                if (addressData && addressData.address) {
+                    document.getElementById('logradouro').value = addressData.address.road || 'Não informado';
+                    document.getElementById('bairro').value = addressData.address.neighbourhood || addressData.address.suburb || 'Não informado';
+                    document.getElementById('cidade-endereco').value = addressData.address.city || addressData.address.town || 'Não informado';
+                    document.getElementById('uf-endereco').value = addressData.address.state || 'Não informado';
+                    document.getElementById('cep').value = addressData.address.postcode || 'Não informado';
+                }
+            }
+        }
+
+        async function populateAddressFieldsFromCep() {
+            const cep = document.getElementById('cep').value;
+            if (cep) {
+                const fullAddress = `${cep}, Brasil`;
+                const coordinates = await fetchCoordinates(fullAddress);
+                if (coordinates && coordinates.length > 0) {
+                    const addressData = await fetchAddressFromCoordinates(coordinates[0].lat, coordinates[0].lon);
+                    if (addressData && addressData.address) {
+                        document.getElementById('logradouro').value = addressData.address.road || 'Não informado';
+                        document.getElementById('bairro').value = addressData.address.neighbourhood || addressData.address.suburb || 'Não informado';
+                        document.getElementById('cidade-endereco').value = addressData.address.city || addressData.address.town || 'Não informado';
+                        document.getElementById('uf-endereco').value = addressData.address.state || 'Não informado';
+                        document.getElementById('cep').value = addressData.address.postcode || 'Não informado';
+                        document.getElementById('latitude').value = coordinates[0].lat;
+                        document.getElementById('longitude').value = coordinates[0].lon;
+                    }
+                }
+            }
+        }
+
+        function showMainForm() {
+            document.getElementById('main-form').style.display = 'block';
+            document.getElementById('address-form').style.display = 'none';
+            document.getElementById('iso-form').style.display = 'none';
+        }
+
+        function showAddressForm() {
+            document.getElementById('main-form').style.display = 'none';
+            document.getElementById('address-form').style.display = 'block';
+        }
+
+        function showISOForm() {
+            document.getElementById('main-form').style.display = 'none';
+            document.getElementById('iso-form').style.display = 'block';
+        }
+
+        function saveAddress() {
+            const logradouro = document.getElementById('logradouro').value || 'Não informado';
+            const numero = document.getElementById('numero').value || 's/n';
+            const complemento = document.getElementById('complemento').value || 's/n';
+            const bairro = document.getElementById('bairro').value || 'Não informado';
+            const cidade = document.getElementById('cidade-endereco').value || 'Não informado';
+            const uf = document.getElementById('uf-endereco').value || 'Não informado';
+            const cep = document.getElementById('cep').value || 'Não informado';
+            const latitude = document.getElementById('latitude').value || 'Não informado';
+            const longitude = document.getElementById('longitude').value || 'Não informado';
+
+            const address = `Logradouro: ${logradouro}, Número: ${numero}, Complemento: ${complemento}, Bairro: ${bairro}, Cidade: ${cidade}, UF: ${uf}, CEP: ${cep}, Latitude: ${latitude}, Longitude: ${longitude}`;
+
+            const addressList = document.getElementById('endereco-list');
+            const enderecoLabel = document.getElementById('endereco-label');
+            if (addressList.children.length === 0) {
+                enderecoLabel.style.display = 'block';
+            }
+            const addressItem = document.createElement('div');
+            addressItem.textContent = address;
+            addressItem.style.backgroundColor = 'rgba(255,255,255,0.07)';
+            addressItem.style.display = 'block';
+            addressItem.style.height = 'auto';
+            addressItem.style.width = '100%';
+            addressItem.style.borderRadius = '3px';
+            addressItem.style.padding = '0 10px';
+            addressItem.style.marginTop = '8px';
+            addressItem.style.fontSize = '14px';
+            addressItem.style.fontWeight = '300';
+
+            addressList.appendChild(addressItem);
+
+            document.getElementById('address-form').reset();
+            showMainForm();
+        }
+
+        function saveISO() {
+            const isoType = document.getElementById('iso-type').value || 'Não informado';
+            const odc = document.getElementById('odc').value || 'Não informado';
+            const consultor = document.getElementById('consultor').value || 'Não informado';
+            const dataEfetivacao = document.getElementById('data-efetivacao').value || 'Não informado';
+            const validade = document.getElementById('validade').value || 'Não informado';
+
+            const isoDetails = `ISO: ${isoType}, ODC: ${odc}, Consultor: ${consultor}, Data de Efetivação: ${dataEfetivacao}, Validade: ${validade}`;
+
+            const isoList = document.getElementById('iso-list');
+            const isoLabel = document.getElementById('iso-label');
+            if (isoList.children.length === 0) {
+                isoLabel.style.display = 'block';
+            }
+            const isoItem = document.createElement('div');
+            isoItem.textContent = isoDetails;
+            isoItem.style.backgroundColor = 'rgba(255,255,255,0.07)';
+            isoItem.style.display = 'block';
+            isoItem.style.height = 'auto';
+            isoItem.style.width = '100%';
+            isoItem.style.borderRadius = '3px';
+            isoItem.style.padding = '0 10px';
+            isoItem.style.marginTop = '8px';
+            isoItem.style.fontSize = '14px';
+            isoItem.style.fontWeight = '300';
+
+            isoList.appendChild(isoItem);
+
+            document.getElementById('iso-form').reset();
+            showMainForm();
+        }
+
+        function updateValidade() {
+            const dataEfetivacao = document.getElementById('data-efetivacao').value;
+            if (dataEfetivacao) {
+                const validadeDate = new Date(dataEfetivacao);
+                validadeDate.setFullYear(validadeDate.getFullYear() + 1);
+                const validadeString = validadeDate.toISOString().split('T')[0];
+                document.getElementById('validade').value = validadeString;
+            } else {
+                document.getElementById('validade').value = '';
+            }
+        }
+
+        function formatDateBR(dateString) {
+            const [year, month, day] = dateString.split('-');
+            return `${day}/${month}/${year}`;
         }
     </script>
 </head>
@@ -172,7 +289,7 @@
 
         <label for="iso">Certificações</label>
         <div id="iso-list">
-            <label style="display: none;"  id="iso-label" for="certificacoesCadastradas">Certificações Cadastradas:</label>
+            <label style="display: none;" id="iso-label" for="certificacoesCadastradas">Certificações Cadastradas:</label>
         </div>
         <button type="button" onclick="showISOForm()">Cadastrar nova certificação</button>
 
@@ -183,10 +300,10 @@
         <h3>Novo Endereço</h3>
 
         <label for="cep">CEP</label>
-        <input type="text" placeholder="CEP" id="cep" onblur="populateAddressFields()">
+        <input type="text" placeholder="CEP" id="cep" onblur="populateAddressFieldsFromCep()">
 
         <label for="logradouro">Logradouro</label>
-        <input type="text" placeholder="Logradouro" id="logradouro" onblur="preciseSearch() ">
+        <input type="text" placeholder="Logradouro" id="logradouro" onblur="preciseSearch()">
 
         <label for="numero">Número</label>
         <input type="text" placeholder="Número" id="numero" onblur="preciseSearch()">
@@ -233,10 +350,10 @@
         <input type="text" placeholder="Cidade" id="cidade-endereco" onblur="preciseSearch()">
 
         <label for="latitude">Latitude</label>
-        <input type="text" placeholder="Latitude" id="latitude" readonly>
+        <input type="text" placeholder="Latitude" id="latitude" onblur="populateAddressFieldsFromCoordinates()">
 
         <label for="longitude">Longitude</label>
-        <input type="text" placeholder="Longitude" id="longitude" readonly>
+        <input type="text" placeholder="Longitude" id="longitude" onblur="populateAddressFieldsFromCoordinates()">
 
         <button type="button" onclick="showMainForm()">Voltar</button>
         <button type="button" onclick="saveAddress()">Salvar Endereço</button>
@@ -282,19 +399,24 @@
         }
 
         function saveAddress() {
-            const logradouro = document.getElementById('logradouro').value;
-            const numero = document.getElementById('numero').value;
-            const cidade = document.getElementById('cidade-endereco').value;
+            const logradouro = document.getElementById('logradouro').value || 'Não informado';
+            const numero = document.getElementById('numero').value || 's/n';
+            const complemento = document.getElementById('complemento').value || 's/n';
+            const bairro = document.getElementById('bairro').value || 'Não informado';
+            const cidade = document.getElementById('cidade-endereco').value || 'Não informado';
+            const uf = document.getElementById('uf-endereco').value || 'Não informado';
+            const cep = document.getElementById('cep').value || 'Não informado';
+            const latitude = document.getElementById('latitude').value || 'Não informado';
+            const longitude = document.getElementById('longitude').value || 'Não informado';
 
-            const address = `${logradouro}, ${numero}, ${cidade}`;
+            const address = `Logradouro: ${logradouro}, Número: ${numero}, Complemento: ${complemento}, Bairro: ${bairro}, Cidade: ${cidade}, UF: ${uf}, CEP: ${cep}, Latitude: ${latitude}, Longitude: ${longitude}`;
 
             const addressList = document.getElementById('endereco-list');
             const enderecoLabel = document.getElementById('endereco-label');
-            if (addressList.children.length > 1) {
+            if (addressList.children.length === 0) {
                 enderecoLabel.style.display = 'block';
             }
             const addressItem = document.createElement('div');
-            const addressButton = document.createElement('button');
             addressItem.textContent = address;
             addressItem.style.backgroundColor = 'rgba(255,255,255,0.07)';
             addressItem.style.display = 'block';
@@ -308,35 +430,26 @@
 
             addressList.appendChild(addressItem);
 
-            addressButton.textContent = "Excluir";
-
             document.getElementById('address-form').reset();
             showMainForm();
         }
 
         function saveISO() {
-            const isoType = document.getElementById('iso-type').value;
-            const odc = document.getElementById('odc').value;
-            const consultor = document.getElementById('consultor').value;
-            const dataEfetivacao = document.getElementById('data-efetivacao').value;
-            const validade = document.getElementById('validade').value;
+            const isoType = document.getElementById('iso-type').value || 'Não informado';
+            const odc = document.getElementById('odc').value || 'Não informado';
+            const consultor = document.getElementById('consultor').value || 'Não informado';
+            const dataEfetivacao = document.getElementById('data-efetivacao').value || 'Não informado';
+            const validade = document.getElementById('validade').value || 'Não informado';
 
-            const isoDetails = {
-                isoType,
-                odc,
-                consultor,
-                dataEfetivacao,
-                validade
-            };
+            const isoDetails = `ISO: ${isoType}, ODC: ${odc}, Consultor: ${consultor}, Data de Efetivação: ${dataEfetivacao}, Validade: ${validade}`;
 
             const isoList = document.getElementById('iso-list');
             const isoLabel = document.getElementById('iso-label');
-            if (isoList.children.length > 1) {
+            if (isoList.children.length === 0) {
                 isoLabel.style.display = 'block';
             }
             const isoItem = document.createElement('div');
-            isoItem.innerHTML = `ISO: ${isoType}, ODC: ${odc}, Consultor: ${consultor}, Validade: ${formatDateBR(validade)};`;
-
+            isoItem.textContent = isoDetails;
             isoItem.style.backgroundColor = 'rgba(255,255,255,0.07)';
             isoItem.style.display = 'block';
             isoItem.style.height = 'auto';
@@ -346,7 +459,6 @@
             isoItem.style.marginTop = '8px';
             isoItem.style.fontSize = '14px';
             isoItem.style.fontWeight = '300';
-            
 
             isoList.appendChild(isoItem);
 
@@ -369,10 +481,6 @@
         function formatDateBR(dateString) {
             const [year, month, day] = dateString.split('-');
             return `${day}/${month}/${year}`;
-        }
-        function deleteAddress(button) {
-        const enderecoItem = button.parentNode;
-        enderecoItem.remove();
         }
     </script>
 </body>
