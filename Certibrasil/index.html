@@ -6,27 +6,94 @@
     <title>CertiBrasil - Mapa Interativo</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-        #map {
-            height: 400px;
-            width: 100%;
-        }
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            width: 100%;
+            background-color: #333;
+            overflow: auto;
+        }
+        .navbar a {
+            float: left;
+            padding: 12px;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-size: 17px;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .navbar a.active {
+            background-color: #007bff;
+            color: white;
+        }
+        #map {
+            height: 300px;
+            width: 40%;
+            position: absolute;
+            top: 60%;
+            left: 5%;
+            transform: translateY(-50%);
+            border: 2px solid #333;
         }
         .content {
             padding: 20px;
+            margin-left: 50%;
+        }
+        header {
+            padding: 20px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+        }
+        .filters {
+            margin: 20px 0;
+        }
+        .filters label, .filters select {
+            display: block;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <a href="#" class="active">Home</a>
+        <a href="#">Clientes</a>
+        <a href="#">Endereços</a>
+        <a href="#">Certificados</a>
+    </div>
+
     <header>
         <h1>CertiBrasil - Mapa Interativo</h1>
     </header>
     <main class="content">
+        <div class="filters">
+            <label for="estado">Estado:</label>
+            <select id="estado">
+                <option value="SP">São Paulo</option>
+                <option value="RJ">Rio de Janeiro</option>
+                <!-- Adicione mais estados aqui -->
+            </select>
+
+            <label for="municipio">Município:</label>
+            <select id="municipio">
+                <option value="sao-paulo">São Paulo</option>
+                <option value="rio-de-janeiro">Rio de Janeiro</option>
+                <!-- Adicione mais municípios aqui -->
+            </select>
+
+            <button onclick="filtrarMapa()">Filtrar</button>
+        </div>
         <div id="map"></div>
     </main>
-    <footer>
-    </footer>
+    <footer></footer>
+    
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
         var map = L.map('map').setView([-23.55052, -46.633308], 13);
@@ -34,10 +101,27 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Adicione um marcador (opcional)
-        L.marker([-23.55052, -46.633308]).addTo(map)
+        var marker = L.marker([-23.55052, -46.633308]).addTo(map)
             .bindPopup('São Paulo, SP')
             .openPopup();
+
+        function filtrarMapa() {
+            var estado = document.getElementById('estado').value;
+            var municipio = document.getElementById('municipio').value;
+
+            if (estado === 'SP' && municipio === 'sao-paulo') {
+                map.setView([-23.55052, -46.633308], 13);
+                marker.setLatLng([-23.55052, -46.633308])
+                    .setPopupContent('São Paulo, SP')
+                    .openPopup();
+            } else if (estado === 'RJ' && municipio === 'rio-de-janeiro') {
+                map.setView([-22.9068, -43.1729], 13);
+                marker.setLatLng([-22.9068, -43.1729])
+                    .setPopupContent('Rio de Janeiro, RJ')
+                    .openPopup();
+            }
+            // Adicione mais condições para outros estados e municípios aqui
+        }
     </script>
 </body>
 </html>
